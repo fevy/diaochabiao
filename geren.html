@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <style>
+			*{margin:0;padding:0;}
+			.box{width: 400px;
+				/*border:1px solid red;*/
+				margin: 10px auto;
+				/*overflow: hidden;*/
+			}
+			.box:after{ content: "";display: block; width: 100%; clear: both; }
+			.box *{ float: left;margin-left: 5px; }
+			#identify{
+				width: 140px;height: 40px;
+				outline: none;
+			}
+			#canvas{
+				margin-top: 1px;
+			}
+			#changeImg{ line-height: 40px;color: #666;text-decoration: none; }
+			#changeImg:hover{ text-decoration: underline; }
+        </style>
+    </head>
+    <body style="background">
+    <center>
+    <form name="test1" action="index.php" method="post" enctype="multipart/form-data" background="img/301284.jpg" style="">
+    <table border="5" width="350" height="50" cellspacing="1" cellpadding="0" bgcolor="skyblue" frame="选择显示边框" bordercolorlight="" >
+    	<caption><h1><font face="仿宋" color="red">用户调查表</font></h1></caption>
+		<tr>
+			<td align="right">姓&nbsp;&nbsp;名：</td>
+			<td><input type="text" value="自己的名字" name="dm" maxlength="9"> <!-- disabled 使得不可操作 -->
+			</td>
+		</tr>
+		<tr>
+			<td align="right">性&nbsp;&nbsp;别：</td>
+			<td><input type="radio" name="sex" value="male">男
+				<input type="radio" name="sex" value="female">女
+				<input type="radio" name="sex" value="secret" checked>保密
+			</td>
+		</tr>
+		<tr>
+			<td align="right">出生日期：</td>
+			<td><select name="year">
+				<option value="3">1993年</option>
+				<option value="4">1994年</option>
+				<option value="5">1995年</option>
+				<option value="6">1996年</option>
+				<option value="7">1997年</option>
+			</select>
+			<select name="mouth">
+				<option value="1">1月</option>
+				<option value="2">2月</option>
+				<option value="3">3月</option>
+				<option value="4">4月</option>
+				<option value="5">5月</option>
+				<option value="6">6月</option>
+			</select>
+			<select name="date">
+				<option value="1">1日</option>
+				<option value="2">2日</option>
+				<option value="3">3日</option>
+				<option value="4">4日</option>
+				<option value="5">5日</option>
+				<option value="6">6日</option>
+				<option value="7">7日</option>
+				<option value="8">8日</option>
+				<option value="9">9日</option>
+				<option value="10">10日</option>
+				<option value="11">11日</option>
+				<option value="12">12日</option>
+				<option value="13">13日</option>
+				<option value="14">14日</option>
+				<option value="15">15日</option>
+				<option value="16">16日</option>
+				<option value="17">17日</option>
+			</select>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">家庭住址：</td>
+			<td>
+				<select name="province" id="pro">
+		    		<option value=""></option>
+		    	</select>省
+		    	<select name="city" id="city">
+		    		<option value=""></option>
+		    	</select>市
+		    	<select name="detraction" id="det">
+		    		<option value=""></option>
+		    	</select>县
+    			<input type="text">
+			</td>
+		</tr>
+		<tr>
+			<td align="right">兴趣爱好：</td>
+			<td>
+			<input type="checkbox" name="like" value="music">音乐
+			<input type="checkbox" name="like" value="basket">篮球
+			<input type="checkbox" name="like" value="swim">游泳
+			<input type="checkbox" name="like" value="play" checked>其他
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><blink>本人照片：</blink></td>
+			<td><input type="file" name="hpic" multiple></td>
+		</tr>
+		<tr>
+			<td align="right">本人简介：</td>
+			<td><textarea rows="3" cols="20" name="u_info" style="resize:none">自我评价</textarea>
+			</td>
+		</tr>
+		<tr>
+			<td align="right">验 证 码：</td>
+			<td>
+				<div class="box">
+				<input type="text" id="identify" placeholder=" 输入验证码" autofocus required>
+				<canvas id="canvas" width="120" height="40"></canvas>
+				<a href="#" id="changeImg">看不清?换一张</a>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">
+				<input type="submit" value="提交">
+				<input type="reset" value="取消">
+				<input type="hidden" name="hide" value="我是隐藏的">
+			</td>
+		</tr>
+    </table>
+    </form>
+    </body>
+    <script type="text/javascript">
+    var pro_arr = ['江苏','浙江','安徽'];
+    var city_arr = [
+    ['南京','盐城','常州','苏州'],
+    ['杭州','宁波','温州'],
+    ['合肥','马鞍山','黄山','蚌埠']
+    ];
+    var det_arr = [
+    [['1','2'],['建湖','大丰'],['5','6'],['7','8']],
+    [['a','b'],['c','d'],['e','f','g','h']],
+    [['一','二'],['三','四'],['五','六'],['七','八']]
+    ]
+    var pro_obj = document.getElementById('pro');
+    var det_obj = document.getElementById('det');
+    var city_obj = document.getElementById('city');
+
+    //遍历省份到下拉列表
+    var pro_opt = ""
+    for (key in pro_arr){
+    	pro_opt += "<option value="+key+">"+pro_arr[key]+"</option>"
+    }
+    // console.log(pro_opt);
+    pro_obj.innerHTML = pro_opt;
+    var city_opt = ""
+    for (key in city_arr[0]){
+        city_opt += "<option value="+key+">"+city_arr[0][key]+"</option>"
+	}
+	// console.log(city_opt)
+	city_obj.innerHTML = city_opt;
+	var det_opt = ""
+    for (key in det_arr[0][0]){
+        det_opt += "<option value="+key+">"+det_arr[0][0][key]+"</option>"
+	}
+	// console.log(det_opt)
+	det_obj.innerHTML = det_opt;
+	//事件触发：onchange
+	pro_obj.onchange = function(){
+		var i = pro_obj.selectedIndex;
+		var city_opt = "";
+		var det_opt = "";
+	    for (key in city_arr[i]){
+	        city_opt += "<option value="+key+">"+city_arr[i][key]+"</option>"
+	    }
+	    for (key in det_arr[i][0]){
+	        det_opt += "<option value="+0+">"+det_arr[i][0][key]+"</option>"
+	    }
+		city_obj.innerHTML = city_opt;
+		det_obj.innerHTML = det_opt;
+	}
+	city_obj.onchange = function(){
+		var i = pro_obj.selectedIndex;
+		var j = city_obj.selectedIndex;
+		var det_opt = "";
+	    for (k in det_arr[i][j]){
+	        det_opt += "<option value="+k+">"+det_arr[i][j][k]+"</option>"
+		}
+			// console.log(det_opt)
+			det_obj.innerHTML = det_opt;
+	}
+    </script>
+    <script type="text/javascript">
+	//思路:
+	//需要点 线  文字 随机颜色 随机位置
+	//点：arc(x,y,radius,startAngle,endAngle,direction);
+	//线：moveTo(100,100)	
+	//文字:fillText(text,x,y)
+	var canvas;
+	var context;
+	var width;
+	var height;;
+	var code = "";//验证码文字
+	
+	// 1.生成一个随机数
+	function randomNum(min,max){		
+		return Math.floor(Math.random()*(max-min)+min);
+	}
+	// 2.生成一个随机颜色 rgb
+	function randomColor(min,max){
+		var r = randomNum(min,max);
+		var g = randomNum(min,max);
+		var b = randomNum(min,max);
+		return "rgb("+r+","+g+","+b+")";
+
+	}
+	// 3.生成一个随机文字
+	function randomCode(){
+		var str = 'ABCEFGHJKLMNPQRSTWXYabcdefghijklmnopqrstuvwxyz12345678';
+		for(var i = 0;i<4;i++){
+			var txt = str[randomNum(0,str.length)];
+			context.font = randomNum(15,30)+"px simHei";
+			context.fillStyle = randomColor(50,160);
+			var x = 10+i*25;
+			var y = randomNum(25,30);
+			var deg = randomNum(-15,15);
+			//旋转(参照帮助手册)
+			context.rotate(deg*Math.PI/180);
+			context.fillText(txt,x,y);
+			context.rotate(-deg*Math.PI/180);
+
+			code +=txt;//存储到code
+		}
+		console.log(code);
+
+
+	}
+	
+	// 4.生成随机点
+	function randomArc(){
+
+		for(var i = 0;i<=30;i++){
+		context.fillStyle = randomColor(0,255);
+		context.beginPath();
+		context.arc(randomNum(0,width),randomNum(0,height), 1, 0, 2*Math.PI);
+		context.fill();
+		}
+
+	}
+	
+	// 5.生成随机线
+	function randomLine(){
+		for (var i = 0; i < 4 ; i++) {
+			context.strokeStyle = randomColor(50,160);
+			context.beginPath();
+			context.moveTo(randomNum(0,width),randomNum(0,height));
+			context.lineTo(randomNum(0,width),randomNum(0,height));
+			context.stroke();
+
+		}
+
+	}
+	
+	// 6.绘制图片
+	function draw(){
+		canvas = document.getElementById('canvas');
+		context = canvas.getContext('2d');
+		width = canvas.width;
+		height = canvas.height;
+
+		//绘制矩形背景
+		context.fillStyle =randomColor(150,220);; 
+	    context.fillRect(0,0,width,height);
+
+		randomCode();
+		randomArc();
+		randomLine();
+	}
+	
+	draw();console.log(code);
+	// 点击换图
+	document.getElementById('changeImg').onclick=function(){
+		draw();
+	}
+	//验证
+	document.getElementById('identify').onblur = function(){
+		// alert(code);
+		// alert(this.value);
+		if(this.value != "" && this.value.toUpperCase() == code.toUpperCase()){
+			alert('验证通过');
+		}
+
+	}
+
+
+	//测试
+	// var num = randomNum(10,20);
+	// console.log(num);
+	// var color = randomColor();
+	// console.log(color);
+	
+	// draw();
+
+
+	</script>
+
+</html>
+    
